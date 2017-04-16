@@ -1,7 +1,7 @@
 <?php
 if (PHP_SAPI === 'cli-server') {
-	// To help the built-in PHP dev server, check if the request was actually for
-	// something which should probably be served as a static file
+	// To help the built-in PHP dev server, check if the request was actually
+	// for something which should probably be served as a static file
 	$url  = parse_url($_SERVER['REQUEST_URI']);
 	$file = (__DIR__ . $url['path']);
 	if (is_file($file)) {
@@ -9,24 +9,24 @@ if (PHP_SAPI === 'cli-server') {
 	}
 }
 
-define('BASE_PATH', dirname(__DIR__));
-
-require(BASE_PATH . '/vendor/autoload.php');
+require((dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'app'
+		 .DIRECTORY_SEPARATOR.'bootstrap.php'));
+require(path(ROOT_DIR, 'vendor', 'autoload.php'));
 
 session_start();
 
 // Instantiate the app
-$settings = require(BASE_PATH . '/src/settings.php');
+$settings = require(path(ROOT_DIR, 'src', 'settings.php'));
 $app = new \Slim\App($settings);
 
 // Set up dependencies
-require(BASE_PATH . '/src/dependencies.php');
+require(path(ROOT_DIR, 'src', 'dependencies.php'));
 
 // Register middleware
-require(BASE_PATH . '/src/middleware.php');
+require(path(ROOT_DIR, 'src', 'middleware.php'));
 
 // Register routes
-require(BASE_PATH . '/src/routes.php');
+require(path(ROOT_DIR, 'src', 'routes.php'));
 
 // Run app
 $app->run();
