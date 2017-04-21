@@ -16,9 +16,11 @@ require((dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'app'
 // Configure autoloader
 require(path(DIR_ROOT, 'vendor', 'autoload.php'));
 spl_autoload_register(function ($classname) {
-	require(path(DIR_ROOT, 'src', 'classes', ($classname . '.php')));
+	$path = path(DIR_ROOT, 'src', 'classes', ($classname . '.php'));
+	if (is_file($path)) {
+		require($path);
+	}
 });
-
 
 function get_settings($file) {
 	if (is_file(path(DIR_CONFIG, $file))) {
