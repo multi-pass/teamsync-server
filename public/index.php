@@ -44,6 +44,7 @@ require(path(DIR_ROOT, 'src', 'middleware.php'));
 // Register routes
 require(path(DIR_ROOT, 'src', 'routes.php'));
 
+session_cache_limiter(false);
 session_start();
 
 // Run app
