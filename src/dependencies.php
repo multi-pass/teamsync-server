@@ -3,6 +3,10 @@
 
 $container = $app->getContainer();
 
+$settings = $container->get('settings');
+$template_path = $settings['renderer']['template_path'];
+$container['renderer'] = new \Slim\Views\PhpRenderer($template_path);
+
 $container['AuthCommand'] = function ($container)
 {
 	return new AuthCommand();
