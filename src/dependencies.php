@@ -23,10 +23,6 @@ $container['db'] = function ($container) {
 	// R::freeze(TRUE);
 };
 
-$settings = $container->get('settings');
-$template_path = $settings['renderer']['template_path'];
-$container['renderer'] = new \Slim\Views\PhpRenderer($template_path);
-
 $container['AuthCommand'] = function ($container)
 {
 	return new AuthCommand();
