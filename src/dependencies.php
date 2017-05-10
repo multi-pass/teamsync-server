@@ -23,19 +23,16 @@ $container['db'] = function ($container) {
 	// R::freeze(TRUE);
 };
 
-$container['AuthCommand'] = function ($container)
-{
+// Configure commands
+$container['AuthCommand'] = function ($container) {
 	return new AuthCommand();
 };
-$container['RequestChallengeCommand'] = function ($container)
-{
+$container['RequestChallengeCommand'] = function ($container) {
 	return new RequestChallengeCommand();
 };
-$container['SetSecretCommand'] = function ($container)
-{
+$container['SetSecretCommand'] = function ($container) {
 	return new SetSecretCommand();
 };
-$container['GetSecretCommand'] = function ($container)
-{
+$container['GetSecretCommand'] = function ($container) {
 	return new GetSecretCommand();
 };
