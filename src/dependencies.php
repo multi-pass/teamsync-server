@@ -15,11 +15,12 @@ $container['db'] = function ($container) {
 			 $dbconf['user'],
 			 $dbconf['password']);
 
-	// Load custom model formatter
-	// RedBean_ModelHelper::setModelFormatter(new ModelFormatter);
+	define('REDBEAN_MODEL_PREFIX', '\\TeamSync\\DAO\\');
+
+	R::setAutoResolve(TRUE);
 
 	// Leave fluid mode
-	R::freeze(TRUE);
+	// R::freeze(TRUE);
 };
 
 $settings = $container->get('settings');
