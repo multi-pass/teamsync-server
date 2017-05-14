@@ -12,20 +12,28 @@ class ApiController {
 	}
 
 	public function auth($request, $response, $args) {
-		return $this->invokeCommand($request, $response, 'Auth');
+		return $this->invokeCommand($request, $response, $args, 'Auth');
 	}
 
 	public function getsecrets($request, $response, $args) {
-		return $this->invokeCommand($request, $response, 'GetSecret');
+		return $this->invokeCommand($request, $response, $args, 'GetSecrets');
 	}
 
-	public function putsecret($request, $response, $args) {
-		return $this->invokeCommand($request, $response, 'SetSecret');
+	public function getputsecret($request, $response, $args) {
+		switch ($request->getMethod()) {
+		case 'GET':
+			return $this->invokeCommand($request, $response, $args, 'GetSecret');
+		case 'PUT':
+			return $this->invokeCommand($request, $response, $args, 'SetSecret');
+		}
 	}
 
-	private function invokeCommand($request, $response, $commandName) {
+	private function invokeCommand($request, $response, $args, $commandName) {
+		$model = $args;
 		$json = json_decode($request->getBody(), TRUE);
-		$model = ($json ? $json : array());
+		if (is_array($json)) {
+			$model = array_merge($model, $json);
+		}
 
 		$command = $this->container->get(($commandName . 'Command'));
 
