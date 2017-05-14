@@ -8,24 +8,17 @@ class RequestChallengeCommand extends Command {
 			return;
 		}
 
-		if ($model['name'] == null)
-		{
+		// TODO: check for valid key
+		if (!isset($model['pgpid']) || is_null($model['pgpid'])) {
 			$this->commandResult->statusCode = 422;
-			$this->commandResult->data['message'] = 'name missing/empty';
-			return;
-		}
-		if ($model['publicKey'] == null) //ToDo check for valid key
-		{
-			$this->commandResult->statusCode = 422;
-			$this->commandResult->data['message'] = 'public key invalid';
+			$this->commandResult->data['message'] = 'PGP id invalid';
 			return;
 		}
 
 		TeamSyncSession::$current->publicKey = $model['pgpid'];
 		TeamSyncSession::$current->authenticated = FALSE;
 		TeamSyncSession::$current->challenge = session_id();
-		TeamsyncSession::$current->name = $model['name'];
-		
+
 		$this->commandResult->statusCode = 200;
 		$this->commandResult->data['challenge'] = TeamSyncSession::$current->challenge;
 		$this->commandResult->data['message'] = '';
