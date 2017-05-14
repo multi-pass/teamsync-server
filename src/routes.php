@@ -13,5 +13,5 @@ $app->group('/auth', function() {
 
 $app->group('/secrets', function() {
 	$this->get('', ApiController::class.':getsecrets');
-	$this->put('{path:/.+}', ApiController::class.':putsecret');
+	$this->map(array('GET', 'PUT'), '{path:/.+}', ApiController::class.':getputsecret');
 })->add(new TeamSyncAuthRequired());

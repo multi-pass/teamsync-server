@@ -30,11 +30,15 @@ $container['AuthCommand'] = function ($container) {
 $container['RequestChallengeCommand'] = function ($container) {
 	return new RequestChallengeCommand();
 };
-$container['SetSecretCommand'] = function ($container) {
+$container['GetSecretsCommand'] = function ($container) {
 	$container->get('db');
-	return new SetSecretCommand();
+	return new GetSecretsCommand();
 };
 $container['GetSecretCommand'] = function ($container) {
 	$container->get('db');
 	return new GetSecretCommand();
+};
+$container['SetSecretCommand'] = function ($container) {
+	$container->get('db');
+	return new SetSecretCommand();
 };

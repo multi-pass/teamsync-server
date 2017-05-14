@@ -15,7 +15,7 @@ class SetSecretCommand extends Command {
 			$this->commandResult->data['message'] = 'path missing';
 			return;
 		}
-		$payload = ($model['payload'] ? $model['payload'] : NULL);
+		$payload = (!empty($model['payload']) ? $model['payload'] : NULL);
 
 		$sec = R::findOne('secret', ' filepath = ? ', array($path));
 		if (is_null($sec)) {
