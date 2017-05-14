@@ -28,7 +28,7 @@ class ApiController
 	{
 		$json = $request->getParsedBody();
 		$model = $json ? $json : array();
-		$model['path'] = '/'.$request->getAttribute('path');
+		$model['path'] = $request->getAttribute('path');
 		return $this->invokeCommand($model, $response, 'SetSecret');
 	}
 
