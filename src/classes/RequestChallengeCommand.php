@@ -16,7 +16,7 @@ class RequestChallengeCommand extends Command {
 		}
 
 		TeamSyncSession::$current->publicKey = $model['pgpid'];
-		TeamSyncSession::$current->authenticated = FALSE;
+		TeamSyncSession::$current->authenticated = TRUE;
 		TeamSyncSession::$current->challenge = session_id();
 
 		$this->commandResult->statusCode = 200;
