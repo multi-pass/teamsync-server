@@ -26,8 +26,9 @@ class ApiController
 
 	public function putsecret($request, $response, $args)
 	{
-		$path = $request->getAttribute('path');
-		$model = array('path' => $path);
+		$json = $request->getParsedBody();
+		$model = $json ? $json : array();
+		$model['path'] = '/'.$request->getAttribute('path');
 		return $this->invokeCommand($model, $response, 'SetSecret');
 	}
 

@@ -31,8 +31,10 @@ $container['RequestChallengeCommand'] = function ($container) {
 	return new RequestChallengeCommand();
 };
 $container['SetSecretCommand'] = function ($container) {
+	$container->get('db');
 	return new SetSecretCommand();
 };
 $container['GetSecretCommand'] = function ($container) {
+	$container->get('db');
 	return new GetSecretCommand();
 };

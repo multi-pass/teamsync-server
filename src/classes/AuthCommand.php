@@ -26,12 +26,12 @@ class AuthCommand extends Command
 		}
 
 		//ToDo decode challenge
-		if ($model['challenge'] != TeamsyncSession::$current->challenge)
+/*		if ($model['challenge'] != TeamsyncSession::$current->challenge)
 		{
 			$this->commandResult->statusCode = 401;
 			$this->commandResult->data['message'] = 'challenge verification failed';
 			return;
-		}
+		}*/
 
 
 		TeamsyncSession::$current->authenticated = TRUE;
