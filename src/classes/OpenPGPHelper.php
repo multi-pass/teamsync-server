@@ -6,7 +6,7 @@ class OpenPGPHelper {
 
 		$recipients = array();
 		foreach ($message as $i => $packet) {
-			if ($packet->tag == 1) {
+			if ($packet->tag === 1) {
 				array_push($recipients, $packet->keyid);
 			}
 		}

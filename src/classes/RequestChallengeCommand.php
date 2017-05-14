@@ -1,13 +1,10 @@
 <?php
 
-class RequestChallengeCommand extends Command
-{
-	public function run($model)
-	{
-		if ($model == null)
-		{
+class RequestChallengeCommand extends Command {
+	public function run($model) {
+		if (is_null($model)) {
 			$this->commandResult->statusCode = 400;
-			$this->commandResult->data['message'] = 'invalid content';
+			$this->commandResult->data['message'] = 'Invalid content';
 			return;
 		}
 
@@ -24,13 +21,13 @@ class RequestChallengeCommand extends Command
 			return;
 		}
 
+		TeamSyncSession::$current->publicKey = $model['pgpid'];
+		TeamSyncSession::$current->authenticated = FALSE;
+		TeamSyncSession::$current->challenge = session_id();
 		TeamsyncSession::$current->name = $model['name'];
-		TeamsyncSession::$current->publicKey = $model['publicKey'];
-		TeamsyncSession::$current->authenticated = FALSE;
-		TeamsyncSession::$current->challenge = session_id();
 		
 		$this->commandResult->statusCode = 200;
-		$this->commandResult->data['challenge'] = TeamsyncSession::$current->challenge;
+		$this->commandResult->data['challenge'] = TeamSyncSession::$current->challenge;
 		$this->commandResult->data['message'] = '';
 	}
 }

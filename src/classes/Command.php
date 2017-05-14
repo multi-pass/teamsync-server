@@ -1,9 +1,7 @@
 <?php
 
-abstract class Command
-{
-	public function __construct()
-	{
+abstract class Command {
+	public function __construct() {
 		$this->commandResult = new CommandResult();
 	}
 
@@ -11,8 +9,7 @@ abstract class Command
 
 	abstract public function run($model);
 
-	public function getResult()
-	{
+	public function getResult() {
 		return $this->commandResult;
 	}
 }

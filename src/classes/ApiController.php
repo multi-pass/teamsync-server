@@ -1,27 +1,22 @@
 <?php
 
-class ApiController
-{
+class ApiController {
 	protected $container;
 
-	public function __construct($container)
-	{
+	public function __construct($container) {
 		$this->container = $container;
 	}
 
-	public function requestlogin($request, $response, $args)
-	{
-		return $this->invokeCommand($request->getParsedBody(), $response, 'RequestChallenge');
+	public function requestlogin($request, $response, $args) {
+		return $this->invokeCommand($request, $response, 'RequestChallenge');
 	}
 
-	public function auth($request, $response, $args)
-	{
-		return $this->invokeCommand($request->getParsedBody(), $response, 'Auth');
+	public function auth($request, $response, $args) {
+		return $this->invokeCommand($request, $response, 'Auth');
 	}
 
-	public function getsecrets($request, $response, $args)
-	{
-		return $this->invokeCommand($request->getParsedBody(), $response, 'GetSecret');
+	public function getsecrets($request, $response, $args) {
+		return $this->invokeCommand($request, $response, 'GetSecret');
 	}
 
 	public function putsecret($request, $response, $args)

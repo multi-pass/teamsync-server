@@ -1,38 +1,31 @@
 <?php
 use \RedBeanPHP\R as R;
 
-class SetSecretCommand extends Command
-{
-	public function run($model)
-	{
-		if ($model == null)
-		{
+class SetSecretCommand extends Command {
+	public function run($model) {
+		if (is_null($model)) {
 			$this->commandResult->statusCode = 400;
-			$this->commandResult->data['message'] = 'invalid content';
+			$this->commandResult->data['message'] = 'Invalid content';
 			return;
 		}
 
 		$path = $model['path'];
-                if ($path == null)
-		{
+		if (is_null($path)) {
 			$this->commandResult->statusCode = 422;
 			$this->commandResult->data['message'] = 'path missing';
 			return;
 		}
-		$payload = $model['payload'] ? $model['payload'] : null;
+		$payload = ($model['payload'] ? $model['payload'] : NULL);
 
-		$sec = R::findOne( 'secret', ' filepath = ? ', [ $path ] );
-		if ($sec == null)
-		{
+		$sec = R::findOne('secret', ' filepath = ? ', array($path));
+		if (is_null($sec)) {
 			$sec = R::dispense('secret');
 			$sec->filepath = $path;
 			$this->commandResult->data['message'] = "Secret Created: $path";
-		}
-		else
-		{
+		} else {
 			$this->commandResult->data['message'] = "Secret Updated: $path";
 		}
-		
+
 		$sec->blob = $payload;
 		R::store($sec);
 
