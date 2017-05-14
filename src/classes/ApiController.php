@@ -19,17 +19,15 @@ class ApiController {
 		return $this->invokeCommand($request, $response, 'GetSecret');
 	}
 
-	public function putsecret($request, $response, $args)
-	{
-		$json = $request->getParsedBody();
-		$model = $json ? $json : array();
-		$model['path'] = $request->getAttribute('path');
-		return $this->invokeCommand($model, $response, 'SetSecret');
+	public function putsecret($request, $response, $args) {
+		return $this->invokeCommand($request, $response, 'SetSecret');
 	}
 
-	private function invokeCommand($model, $response, $commandName)
-	{
-		$command = $this->container->get($commandName . 'Command');
+	private function invokeCommand($request, $response, $commandName) {
+		$json = json_decode($request->getBody(), TRUE);
+		$model = ($json ? $json : array());
+
+		$command = $this->container->get(($commandName . 'Command'));
 
 		$command->run($model);
 		$result = $command->getResult();
