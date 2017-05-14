@@ -9,9 +9,9 @@ $app->get('/', function (Request $request, Response $response) {
 $app->group('/auth', function() {
 	$this->post('/requestlogin', ApiController::class.':requestlogin');
 	$this->post('/login', ApiController::class.':auth');
-})->add(new TeamsyncAuthOptional());
+})->add(new TeamSyncAuthOptional());
 
 $app->group('/secrets', function() {
 	$this->get('', ApiController::class.':getsecrets');
 	$this->put('{path:/.+}', ApiController::class.':putsecret');
-})->add(new TeamsyncAuthRequired());
+})->add(new TeamSyncAuthRequired());
