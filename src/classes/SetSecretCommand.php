@@ -32,7 +32,7 @@ class SetSecretCommand extends Command {
 			foreach (array_intersect($payload_hash, $model['hash']) as $dgst_algo) {
 				if ($payload_hash[$dgst_algo] !== $model['hash'][$dgst_algo]){
 					$this->commandResult->data['message'] = 'Hash validation failed';
-					$this->CommandResult->statusCode = 400;
+					$this->commandResult->statusCode = 400;
 					return;
 				}
 			}
