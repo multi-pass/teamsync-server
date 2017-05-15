@@ -9,25 +9,28 @@ class SetSecretCommand extends Command {
 			return;
 		}
 
-		$path = $model['path'];
-		if (is_null($path)) {
+		if (!isset($model['path']) || is_null($model['path'])) {
 			$this->commandResult->statusCode = 422;
 			$this->commandResult->data['message'] = 'path missing';
 			return;
 		}
+		$path = $model['path'];
+
+		$pgpid = TeamSyncSession::$current->publicKey;
+
 		$payload = (!empty($model['payload']) ? $model['payload'] : NULL);
 
-		$sec = R::findOne('secret', ' filepath = ? ', array($path));
+		$sec = \TeamSync\DAO\Secret::findByPath($path, $pgpid);
 		if (is_null($sec)) {
 			$sec = R::dispense('secret');
 			$sec->filepath = $path;
-			$this->commandResult->data['message'] = "Secret Created: $path";
+			$this->commandResult->data['message'] = "Secret Created: ${path}";
 		} else {
-			$this->commandResult->data['message'] = "Secret Updated: $path";
+			$this->commandResult->data['message'] = "Secret Updated: ${path}";
 		}
 
 		$sec->blob = $payload;
-		R::store($sec);
+		$id = R::store($sec);
 
 		// Recipient Bean erstellen
 /*		$rec = R::dispense('recipient');
@@ -40,6 +43,6 @@ class SetSecretCommand extends Command {
 		R::storeAll([$sec,$rec]);
 */
 
-		$this->commandResult->statusCode = 200;
+		$this->commandResult->statusCode = (0 < $id ? 200 : 500);
 	}
 }
