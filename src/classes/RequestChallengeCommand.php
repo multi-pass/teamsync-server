@@ -9,13 +9,13 @@ class RequestChallengeCommand extends Command {
 		}
 
 		// TODO: check for valid key
-		if (!isset($model['pgpid']) || is_null($model['pgpid'])) {
+		if (!isset($model['fingerprint']) || is_null($model['fingerprint'])) {
 			$this->commandResult->statusCode = 422;
-			$this->commandResult->data['message'] = 'PGP id invalid';
+			$this->commandResult->data['message'] = 'fingerprint invalid';
 			return;
 		}
 
-		TeamSyncSession::$current->publicKey = $model['pgpid'];
+		TeamSyncSession::$current->publicKey = $model['fingerprint'];
 		TeamSyncSession::$current->authenticated = TRUE;
 		TeamSyncSession::$current->challenge = session_id();
 
