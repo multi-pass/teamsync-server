@@ -25,8 +25,19 @@ class Secret extends \RedBeanPHP\SimpleModel {
 	 * @return bean that represent a secret at the given path for user with $pgpid
 	 */
 	public static function findByPath($path, $pgpid) {
-		// TODO: Check for PGP id
-		return R::findOne('secret', ' filepath = ? ', array($path));
+		$sql = 'SELECT `secret`.* FROM `secret` '
+			  .'NATURAL JOIN `recipient_secret` '
+			  .'NATURAL JOIN `recipient` '
+			  .'WHERE `secret`.`filepath` = :path '
+			  .'AND RIGHT(`recipient`.`pgpid`, LEAST(LENGTH(`recipient`.`pgpid`), :idlen)) '
+			  .'    = RIGHT(:pgpid, LEAST(LENGTH(`recipient`.`pgpid`), :idlen)) '
+			  .'LIMIT 1';
+		$rows = R::getRow($sql, array(
+			':path' => $path,
+			':pgpid' => $pgpid,
+			':idlen' => strlen($pgpid)
+		));
+		return R::convertToBean('secret', $rows);
 	}
 
 	/**
@@ -36,18 +47,21 @@ class Secret extends \RedBeanPHP\SimpleModel {
 	 * @return array of beans that represents all secrets for user with $pgpid
 	 */
 	public static function findAll($pgpid) {
-		return R::findAll('secret');
+		$sql = 'SELECT `secret`.* FROM `secret` '
+			  .'NATURAL JOIN `recipient_secret` '
+			  .'NATURAL JOIN `recipient` '
+			  .'WHERE RIGHT(`recipient`.`pgpid`, LEAST(LENGTH(`recipient`.`pgpid`), :idlen)) '
+			  .'    = RIGHT(:pgpid, LEAST(LENGTH(`recipient`.`pgpid`), :idlen))'
+			  .'ORDER BY `secret`.`filepath` ASC';
+
+		$rows = R::getAll($sql, array(
+			':pgpid' => $pgpid,
+			':idlen' => strlen($pgpid)
+		));
+		return R::convertToBeans('secret', $rows);
 	}
 
-	/**
-	 * Get a list of all secrets stored for user with $pgpid.
-	 *
-	 * @param string $pgpid
-	 * @return array of string that represents all secrets for user with $pgpid
-	 */
-	public static function listAll($pgpid) {
-		return R::getCol('SELECT filepath FROM secret');
-	}
+
 
 	public function hashes() {
 		$hashes = array_filter($this->bean->export(), function ($key) {
@@ -59,5 +73,13 @@ class Secret extends \RedBeanPHP\SimpleModel {
 		}, array_keys($hashes));
 		$hash_values = array_values($hashes);
 		return array_combine($hash_algos, $hash_values);
+	}
+
+	public function recipients() {
+		$recipients = array();
+		foreach ($this->bean->ownRecipientsList as $rec) {
+			array_push($recipients, $rec->pgpid);
+		}
+		return $recipients;
 	}
 }

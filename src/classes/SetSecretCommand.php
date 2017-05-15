@@ -38,7 +38,15 @@ class SetSecretCommand extends Command {
 			}
 		}
 
+		$recipients = \TeamSync\OpenPGPHelper::getRecipients($payload);
+		if (empty($recipients)) {
+			$this->commandResult->data['message'] = 'Could not find recipients';
+			$this->commandResult->statusCode = 400;
+			return;
+		}
+
 		$sec = \TeamSync\DAO\Secret::findByPath($path, $pgpid);
+
 		if (is_null($sec)) {
 			$sec = R::dispense('secret');
 			$sec->filepath = $path;
@@ -56,7 +64,7 @@ class SetSecretCommand extends Command {
 		// Recipient Bean erstellen
 		$this->commandResult->data['recipients'] = array();
 
-		$recipients = \TeamSync\OpenPGPHelper::getRecipients($payload);
+
 		foreach ($recipients as $recipient_pgpid) {
 			array_push($this->commandResult->data['recipients'], $recipient_pgpid);
 

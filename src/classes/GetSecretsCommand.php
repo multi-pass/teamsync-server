@@ -3,8 +3,7 @@ use \RedBeanPHP\R as R;
 class GetSecretsCommand extends Command {
 	public function run($model) {
 		$pgpid = TeamSyncSession::$current->publicKey;
-		$secrets = \TeamSync\DAO\Secret::listAll($pgpid);
-		sort($secrets);
+		$secrets = \TeamSync\DAO\Secret::findAll($pgpid); // presorted
 
 		$out = array(
 			'path' => '/',
@@ -14,8 +13,8 @@ class GetSecretsCommand extends Command {
 
 		foreach ($secrets as $s) {
 			$p =& $out;
-			if ("/" !== dirname($s)) {
-				$path = explode('/', dirname($s));
+			if ("/" !== dirname($s->filepath)) {
+				$path = explode('/', dirname($s->filepath));
 				array_shift($path);
 
 				foreach ($path as $c) {
@@ -30,7 +29,7 @@ class GetSecretsCommand extends Command {
 				}
 			}
 
-			$sec = \TeamSync\DAO\Secret::findByPath($s, $pgpid);
+			$sec = \TeamSync\DAO\Secret::findByPath($s->filepath, $pgpid);
 			array_push($p['secrets'], array(
 				'name' => basename($sec->filepath),
 				'hash' => $sec->hashes()

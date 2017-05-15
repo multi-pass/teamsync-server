@@ -29,7 +29,7 @@ class Recipient extends \RedBeanPHP\SimpleModel {
 	 */
 	public static function forKey($pgpid) {
 		$rec = R::findOne('recipient',
-						  ' `fingerprint` REGEXP :regexp OR `pgpid` REGEXP :regexp ',
+						  ' `fingerprint` RLIKE :regexp OR `pgpid` RLIKE :regexp ',
 						  array('regexp' => ($pgpid.'$')));
 
 		if (is_null($rec)) {
