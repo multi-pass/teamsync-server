@@ -49,4 +49,15 @@ class Secret extends \RedBeanPHP\SimpleModel {
 		return R::getCol('SELECT filepath FROM secret');
 	}
 
+	public function hashes() {
+		$hashes = array_filter($this->bean->export(), function ($key) {
+			return (0 === strpos($key, 'hash_'));
+		}, ARRAY_FILTER_USE_KEY);
+
+		$hash_algos = array_map(function ($key) {
+			return preg_replace('/^hash_/i', '', $key);
+		}, array_keys($hashes));
+		$hash_values = array_values($hashes);
+		return array_combine($hash_algos, $hash_values);
+	}
 }

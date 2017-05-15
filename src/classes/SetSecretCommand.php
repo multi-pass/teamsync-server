@@ -50,7 +50,7 @@ class SetSecretCommand extends Command {
 		// Update fields of secret
 		$sec->blob = $payload;
 		foreach ($payload_hash as $dgst_algo => $dgst) {
-			$sec->{'blob_'.$dgst_algo} = $dgst;
+			$sec->{'hash_'.$dgst_algo} = $dgst;
 		}
 
 		// Recipient Bean erstellen
