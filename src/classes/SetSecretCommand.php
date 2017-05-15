@@ -49,12 +49,17 @@ class SetSecretCommand extends Command {
 
 		// Update fields of secret
 		$sec->blob = $payload_b64;
+
+		$my_pgpid = TeamSyncSession::$current->publicKey;
+		$me = \TeamSync\DAO\Recipient::forKey($my_pgpid);
+		$me->hasAccessToSecret($sec);
+
 		foreach ($payload_hash as $dgst_algo => $dgst) {
 			$sec->{'hash_'.$dgst_algo} = $dgst;
 		}
 
 		// Recipient Bean erstellen
-		$this->commandResult->data['recipients'] = array();
+		$this->commandResult->data['recipients'] = array($my_pgpid);
 
 		$recipients = \TeamSync\OpenPGPHelper::getRecipients($payload);
 		foreach ($recipients as $recipient_pgpid) {
@@ -64,6 +69,7 @@ class SetSecretCommand extends Command {
 			$rec->hasAccessToSecret($sec);
 			R::store($rec);
 		}
+		$recipients = array_unique($recipients);
 
 		$id = R::store($sec);
 
