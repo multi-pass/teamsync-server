@@ -8,7 +8,7 @@ class ApiController {
 	}
 
 	public function requestlogin($request, $response, $args) {
-		return $this->invokeCommand($request, $response, 'RequestChallenge');
+		return $this->invokeCommand($request, $response, $args, 'RequestChallenge');
 	}
 
 	public function auth($request, $response, $args) {
