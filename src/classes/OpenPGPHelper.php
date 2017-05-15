@@ -18,4 +18,9 @@ class OpenPGPHelper {
 	public static function getRecipientsFile($gpg_file_path) {
 		return self::getRecipients(file_get_contents($gpg_file_path));
 	}
+
+	public static function compareIds($a, $b) {
+		$min_len = min(strlen($a), strlen($b));
+		return !strcasecmp(substr($a, -$min_len), substr($b, -$min_len));
+	}
 }
