@@ -9,11 +9,16 @@ class GetSecretCommand extends Command {
 		}
 
 		$secret_path = $model['path'];
+		$pgpid = TeamSyncSession::$current->publicKey;
 
-		$bean = R::findOne('secret', ' WHERE filepath = ?', array($secret_path));
+		$bean = \TeamSync\DAO\Secret::findByPath($secret_path, $pgpid);
 
 		if (!is_null($bean)) {
-			$this->commandResult->data = $bean;
+			$this->commandResult->data = array(
+				'path' => $bean->filepath,
+				'hash' => $bean->hashes(),
+				'payload' => $bean->blob
+			);
 			$this->commandResult->statusCode = 200;
 		} else {
 			$this->commandResult->statusCode = 404;
