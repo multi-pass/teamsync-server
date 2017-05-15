@@ -11,14 +11,32 @@ class SetSecretCommand extends Command {
 
 		if (!isset($model['path']) || is_null($model['path'])) {
 			$this->commandResult->statusCode = 422;
-			$this->commandResult->data['message'] = 'path missing';
+			$this->commandResult->data['message'] = 'Path missing';
 			return;
 		}
 		$path = $model['path'];
 
 		$pgpid = TeamSyncSession::$current->publicKey;
 
-		$payload = (!empty($model['payload']) ? $model['payload'] : NULL);
+		$payload_b64 = (!empty($model['payload']) ? $model['payload'] : NULL);
+		$payload = base64_decode($payload_b64);
+
+		// Calculate hashes
+		$payload_hash = array(
+			'sha256' => hash('sha256', $payload),
+			'ripemd160' => hash('ripemd160', $payload),
+			'sha1' => hash('sha1', $payload)
+		);
+
+		if (isset($model['hash']) && is_array($model['hash'])) {
+			foreach (array_intersect($payload_hash, $model['hash']) as $dgst_algo) {
+				if ($payload_hash[$dgst_algo] !== $model['hash'][$dgst_algo]){
+					$this->commandResult->data['message'] = 'Hash validation failed';
+					$this->CommandResult->statusCode = 400;
+					return;
+				}
+			}
+		}
 
 		$sec = \TeamSync\DAO\Secret::findByPath($path, $pgpid);
 		if (is_null($sec)) {
@@ -29,19 +47,25 @@ class SetSecretCommand extends Command {
 			$this->commandResult->data['message'] = "Secret Updated: ${path}";
 		}
 
+		// Update fields of secret
 		$sec->blob = $payload;
-		$id = R::store($sec);
+		foreach ($payload_hash as $dgst_algo => $dgst) {
+			$sec->{'blob_'.$dgst_algo} = $dgst;
+		}
 
 		// Recipient Bean erstellen
-/*		$rec = R::dispense('recipient');
-		$rec->publicKey = TeamsyncSession::$current->publicKey;
+		$this->commandResult->data['recipients'] = array();
 
-		// Relation hinzufügen
-		array_push($sec->sharedRecipientList, $rec);
+		$recipients = \TeamSync\OpenPGPHelper::getRecipients($payload);
+		foreach ($recipients as $recipient_pgpid) {
+			array_push($this->commandResult->data['recipients'], $recipient_pgpid);
 
-		// Werte in DB schreiben
-		R::storeAll([$sec,$rec]);
-*/
+			$rec = \TeamSync\DAO\Recipient::forKey($recipient_pgpid);
+			$rec->hasAccessToSecret($sec);
+			R::store($rec);
+		}
+
+		$id = R::store($sec);
 
 		$this->commandResult->statusCode = (0 < $id ? 200 : 500);
 	}
