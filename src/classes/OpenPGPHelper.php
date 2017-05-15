@@ -1,8 +1,9 @@
 <?php
+namespace TeamSync;
 
 class OpenPGPHelper {
-	public static function getRecipients(string $pgp_blob) {
-		$message = OpenPGP_Message::parse($gpg_blob);
+	public static function getRecipients($pgp_blob) {
+		$message = \OpenPGP_Message::parse($pgp_blob);
 
 		$recipients = array();
 		foreach ($message as $i => $packet) {
@@ -14,7 +15,7 @@ class OpenPGPHelper {
 		return $recipients;
 	}
 
-	public static function getRecipientsFile(string $gpg_file_path) {
+	public static function getRecipientsFile($gpg_file_path) {
 		return self::getRecipients(file_get_contents($gpg_file_path));
 	}
 }
