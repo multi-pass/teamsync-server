@@ -29,8 +29,11 @@ class ApiController {
 	}
 
 	private function invokeCommand($request, $response, $args, $commandName) {
-		$model = $args;
-		$json = json_decode($request->getBody(), TRUE);
+		$model = array();
+		if (is_array($args)) {
+			$model = array_merge($model, $args);
+		}
+		$json = json_decode($request->getBody()->getContents(), TRUE);
 		if (is_array($json)) {
 			$model = array_merge($model, $json);
 		}
