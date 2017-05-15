@@ -48,7 +48,7 @@ class SetSecretCommand extends Command {
 		}
 
 		// Update fields of secret
-		$sec->blob = $payload;
+		$sec->blob = $payload_b64;
 		foreach ($payload_hash as $dgst_algo => $dgst) {
 			$sec->{'hash_'.$dgst_algo} = $dgst;
 		}
