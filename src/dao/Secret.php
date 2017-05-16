@@ -33,12 +33,14 @@ class Secret extends \RedBeanPHP\SimpleModel {
 			  .'AND RIGHT(`recipient`.`pgpid`, LEAST(LENGTH(`recipient`.`pgpid`), :idlen)) '
 			  .'    = RIGHT(:pgpid, LEAST(LENGTH(`recipient`.`pgpid`), :idlen)) '
 			  .'LIMIT 1';
-		$rows = R::getRow($sql, array(
+
+		$secrets = R::findMulti('secret', $sql, array(
 			':path' => $path,
 			':pgpid' => $pgpid,
 			':idlen' => strlen($pgpid)
-		));
-		return R::convertToBean('secret', $rows);
+		))['secret'];
+
+		return (count($secrets) > 0 ? reset($secrets) : NULL);
 	}
 
 	/**
@@ -62,6 +64,11 @@ class Secret extends \RedBeanPHP\SimpleModel {
 			':idlen' => strlen($pgpid)
 		));
 		return R::convertToBeans('secret', $rows);
+
+		return R::findMulti('secret', $sql, array(
+			':pgpid' => $pgpid,
+			':idlen' => strlen($pgpid)
+		))['secret'];
 	}
 
 	private static function tableExists() {
