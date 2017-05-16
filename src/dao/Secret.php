@@ -25,6 +25,7 @@ class Secret extends \RedBeanPHP\SimpleModel {
 	 * @return bean that represent a secret at the given path for user with $pgpid
 	 */
 	public static function findByPath($path, $pgpid) {
+		if (!self::tableExists()) { return NULL; }
 		$sql = 'SELECT `secret`.* FROM `secret` '
 			  .'NATURAL JOIN `recipient_secret` '
 			  .'NATURAL JOIN `recipient` '
@@ -47,6 +48,8 @@ class Secret extends \RedBeanPHP\SimpleModel {
 	 * @return array of beans that represents all secrets for user with $pgpid
 	 */
 	public static function findAll($pgpid) {
+		if (!self::tableExists()) { return array(); }
+
 		$sql = 'SELECT `secret`.* FROM `secret` '
 			  .'NATURAL JOIN `recipient_secret` '
 			  .'NATURAL JOIN `recipient` '
@@ -61,6 +64,11 @@ class Secret extends \RedBeanPHP\SimpleModel {
 		return R::convertToBeans('secret', $rows);
 	}
 
+	private static function tableExists() {
+		return (0 < R::getCell('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_NAME = "secret"'));
+
+
+	}
 
 
 	public function hashes() {
