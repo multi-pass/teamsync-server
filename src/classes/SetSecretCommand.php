@@ -16,6 +16,12 @@ class SetSecretCommand extends Command {
 		}
 		$path = $model['path'];
 
+		if (2 > strlen($path)) {
+			$this->commandResult->statusCode = 422;
+			$this->commandResult->data['message'] = 'Invalid path';
+			return;
+		}
+
 		$pgpid = TeamSyncSession::$current->publicKey;
 
 		$payload_b64 = (!empty($model['payload']) ? $model['payload'] : NULL);
