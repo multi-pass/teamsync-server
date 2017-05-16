@@ -26,18 +26,18 @@ class Secret extends \RedBeanPHP\SimpleModel {
 	 */
 	public static function findByPath($path, $pgpid) {
 		if (!self::tableExists()) { return NULL; }
-		$sql = 'SELECT `secret`.* FROM `secret` '
-			  .'NATURAL JOIN `recipient_secret` '
-			  .'NATURAL JOIN `recipient` '
-			  .'WHERE `secret`.`filepath` = :path '
-			  .'AND RIGHT(`recipient`.`pgpid`, LEAST(LENGTH(`recipient`.`pgpid`), :idlen)) '
-			  .'    = RIGHT(:pgpid, LEAST(LENGTH(`recipient`.`pgpid`), :idlen)) '
+
+		$sql = 'SELECT secret.* FROM secret '
+			  .'NATURAL JOIN recipient_secret '
+			  .'NATURAL JOIN recipient '
+			  .'WHERE secret.filepath = :path '
+			  .'AND RIGHT(recipient.pgpid, LEAST(LENGTH(recipient.pgpid), LENGTH(:pgpid))) '
+			  .'    = RIGHT(:pgpid, LEAST(LENGTH(recipient.pgpid), LENGTH(:pgpid))) '
 			  .'LIMIT 1';
 
 		$secrets = R::findMulti('secret', $sql, array(
 			':path' => $path,
-			':pgpid' => $pgpid,
-			':idlen' => strlen($pgpid)
+			':pgpid' => $pgpid
 		))['secret'];
 
 		return (count($secrets) > 0 ? reset($secrets) : NULL);
@@ -52,29 +52,20 @@ class Secret extends \RedBeanPHP\SimpleModel {
 	public static function findAll($pgpid) {
 		if (!self::tableExists()) { return array(); }
 
-		$sql = 'SELECT `secret`.* FROM `secret` '
-			  .'NATURAL JOIN `recipient_secret` '
-			  .'NATURAL JOIN `recipient` '
-			  .'WHERE RIGHT(`recipient`.`pgpid`, LEAST(LENGTH(`recipient`.`pgpid`), :idlen)) '
-			  .'    = RIGHT(:pgpid, LEAST(LENGTH(`recipient`.`pgpid`), :idlen))'
-			  .'ORDER BY `secret`.`filepath` ASC';
-
-		$rows = R::getAll($sql, array(
-			':pgpid' => $pgpid,
-			':idlen' => strlen($pgpid)
-		));
-		return R::convertToBeans('secret', $rows);
+		$sql = 'SELECT secret.* FROM secret '
+			  .'NATURAL JOIN recipient_secret '
+			  .'NATURAL JOIN recipient '
+			  .'WHERE RIGHT(recipient.pgpid, LEAST(LENGTH(recipient.pgpid), LENGTH(:pgpid))) '
+			  .'    = RIGHT(:pgpid, LEAST(LENGTH(recipient.pgpid), LENGTH(:pgpid)))'
+			  .'ORDER BY secret.filepath ASC';
 
 		return R::findMulti('secret', $sql, array(
-			':pgpid' => $pgpid,
-			':idlen' => strlen($pgpid)
+			':pgpid' => $pgpid
 		))['secret'];
 	}
 
 	private static function tableExists() {
 		return (0 < R::getCell('SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_NAME = "secret"'));
-
-
 	}
 
 
