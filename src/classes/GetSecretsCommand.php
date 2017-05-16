@@ -29,10 +29,9 @@ class GetSecretsCommand extends Command {
 				}
 			}
 
-			$sec = \TeamSync\DAO\Secret::findByPath($s->filepath, $pgpid);
 			array_push($p['secrets'], array(
-				'name' => basename($sec->filepath),
-				'hash' => $sec->hashes()
+				'name' => basename($s->filepath),
+				'hash' => $s->hashes()
 			));
 		}
 
