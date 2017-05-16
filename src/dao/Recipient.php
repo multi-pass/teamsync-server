@@ -13,7 +13,7 @@ class Recipient extends \RedBeanPHP\SimpleModel {
 	 */
 	public static function forFingerprint($fingerprint) {
 		$rec = NULL;
-		if (!($rec = R::findOne('recipient', ' `fingerprint` = ? ', array($pgpid)))) {
+		if (!($rec = R::findOne('recipient', ' fingerprint = ? ', array($pgpid)))) {
 			$rec = R::dispense('recipient');
 			$rec->fingerprint = $fingerprint;
 		}
@@ -29,8 +29,8 @@ class Recipient extends \RedBeanPHP\SimpleModel {
 	 */
 	public static function forKey($pgpid) {
 		$rec = R::findOne('recipient',
-						  ' `fingerprint` RLIKE :regexp OR `pgpid` RLIKE :regexp ',
-						  array('regexp' => ($pgpid.'$')));
+						  ' RIGHT(pgpid, LENGTH(:pgpid)) = :pgpid ',
+						  array(':pgpid' => $pgpid));
 
 		if (is_null($rec)) {
 			$rec = R::dispense('recipient');
