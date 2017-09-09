@@ -2,7 +2,7 @@
     "name": "teamsync/server",
     "description": "",
     "keywords": ["multipass","teamsync"],
-    "homepage": "https://github.engineering.zhaw.ch/PSIT3-FS17-ZH-5/teamsync-server",
+    "homepage": "https://github.com/multi-pass/teamsync-server",
     "license": "",
     "require": {
         "php": ">=5.5.0",
@@ -13,12 +13,12 @@
     "require-dev": {
         "phpunit/phpunit": ">=4.8 < 6.0"
     },
-	"autoload": {
-		"psr-4": {
-			"TeamSync\\": "src/classes",
-			"TeamSync\\DAO\\": "src/dao"
-		}
-	},
+    "autoload": {
+        "psr-4": {
+            "TeamSync\\": "src/classes",
+            "TeamSync\\DAO\\": "src/dao"
+        }
+    },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
