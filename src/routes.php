@@ -3,7 +3,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
 $app->get('/', function (Request $request, Response $response) {
-	return $response->withStatus(200)->write('Visit https://github.engineering.zhaw.ch/PSIT3-FS17-ZH-5/teamsync-server');
+	return $response->withStatus(204);
 });
 
 $app->group('/auth', function() {
